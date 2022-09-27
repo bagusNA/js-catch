@@ -40,13 +40,15 @@ body {
 
 #hp {
     --height: 30px;
+    --width: 400px;
 
-    width: calc(1 * 400px);
+    width: calc(1 * var(--width));
     height: var(--height);
     background-color: var(--primary);
     border-top-right-radius: calc(var(--height) / 2);
     border-bottom-right-radius: calc(var(--height) / 2);
     margin-bottom: 1rem;
+    transition: 50ms;
 }
 
 #score {

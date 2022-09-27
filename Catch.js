@@ -4,23 +4,28 @@ class Catch {
     hp = {
         max: 100,
         current: 100,
-        drain: 5
+        drain: 5,
+        idleDrain: 1,
     };
 
     fruits = [];
     fruit = {
         asset: new Image(),
-        size: 32,
+        size: 64,
+        speed: 10,
     }
 
     catcher = {
         asset: new Image(),
         posX: null,
-        size: 96,
+        size: 128,
         offsetY: 100,
         dx: 8,
+        leftBorder: null,
         rightBorder: null,
     }
+
+    requestFrameId;
 
     constructor({ canvas, asset, scoreElement, hpElement, progressElement }) {
         this.canvas = canvas;
@@ -29,12 +34,8 @@ class Catch {
         this.hpElement = hpElement;
         this.progressElement = progressElement;
 
-        this.catcher.posX = this.canvas.width / 2;
-
         this.fruit.asset.src = asset.fruit;
         this.catcher.asset.src = asset.catcher;
-
-        this.catcher.rightBorder = this.catcher.posX + this.catcher.size;
 
         this.setup();
     }
@@ -50,7 +51,7 @@ class Catch {
     }
 
     render() {
-        requestAnimationFrame(() => this.render());
+        this.requestFrameId = requestAnimationFrame(() => this.render());
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.drawFruits();
@@ -58,7 +59,7 @@ class Catch {
     }
 
     drawFruits() {
-        this.fruits.forEach((fruit, index) => {
+        this.fruits.forEach((fruit) => {
             this.ctx.fillStyle = 'red'
             this.ctx.drawImage(
                 this.fruit.asset,
@@ -69,17 +70,19 @@ class Catch {
             );
 
             if (
-                fruit.posY >= this.canvas.height - this.catcher.offsetY &&
-                fruit.posX >= this.catcher.posX &&
+                fruit.posY >= this.canvas.height - this.catcher.offsetY - this.fruit.size / 2 &&
+                fruit.posX >= this.catcher.leftBorder &&
                 fruit.posX <= this.catcher.rightBorder
             ) {
                 this.increaseScore();
                 this.fruits.shift();
             }
-            else if (fruit.posY >= this.canvas.height)
-               this.fruits.shift();
+            else if (fruit.posY >= this.canvas.height) {
+                this.increaseMiss();
+                this.fruits.shift();
+            }
 
-            this.fruits[index].posY += 10;
+            fruit.posY += this.fruit.speed;
         });
     }
 
@@ -106,12 +109,14 @@ class Catch {
                 this.catcher.posX < this.canvas.width - this.catcher.size
             ) {
                 this.catcher.posX += localDx;
-                this.catcher.rightBorder = this.catcher.posX + this.catcher.size;
             }
             else if (ev.key === 'ArrowLeft' && this.catcher.posX > 0) {
                 this.catcher.posX -= localDx;
-                this.catcher.rightBorder = this.catcher.posX + this.catcher.size;
             }
+
+            this.calcCatcherBorder();
+            console.log(this.catcher.posX)
+
         });
     }
 
@@ -126,20 +131,34 @@ class Catch {
 
     setSize() {
         this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        this.catcher.posX = this.canvas.width / 2 - this.catcher.size / 2;
+        this.canvas.height = window.innerHeight - 4;
+        this.catcher.posX = this.canvas.width / 2 - this.catcher.size / 4;
+        this.calcCatcherBorder();
+    }
+
+    calcCatcherBorder() {
+        this.catcher.leftBorder = this.catcher.posX - this.catcher.size / 4;
+        this.catcher.rightBorder = this.catcher.posX + this.catcher.size;
     }
 
     increaseScore() {
-        if (this.hp.current <= this.hp.max - this.hp.drain)
-            this.hp = this.hp.max;
+        this.hp.current += 5;
 
+        if (this.hp.current >= this.hp.max - this.hp.drain)
+            this.hp.current = this.hp.max;
+
+        this.hpElement.style.width = `calc(${this.hp.current / 100} * var(--width)`;
         this.score += 300;
         this.scoreElement.innerHTML = this.score.toString().padStart(8, '0');
+
     }
 
     increaseMiss() {
-        this.hp -= 10;
+        this.hp.current -= 10;
+        if (this.hp.current <= 0)
+            this.hp.current = 0;
+
+        this.hpElement.style.width = `calc(${this.hp.current / 100} * var(--width)`
     }
 }
 

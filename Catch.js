@@ -73,8 +73,8 @@ class Catch {
 
             if (
                 fruit.posY >= this.canvas.height - this.catcher.offsetY - this.fruit.size / 2 &&
-                fruit.posX >= this.catcher.leftBorder &&
-                fruit.posX <= this.catcher.rightBorder
+                fruit.centerX >= this.catcher.posX &&
+                fruit.centerX <= this.catcher.rightBorder
             ) {
                 this.increaseScore();
                 this.fruits.shift();
@@ -122,11 +122,14 @@ class Catch {
 
     generateFruit() {
         setInterval(() => {
+            const posX = this.getCenterX(this.canvas.width / 2, this.fruit.size)
+
             this.fruits.push({
-                posX: this.getCenterX(this.canvas.width / 2, this.fruit.size),
+                posX,
                 posY: 0 - this.fruit.size,
+                centerX: this.getCenterX(posX, this.fruit.size, true),
             });
-        }, 500);
+        }, 250);
     }
 
     setSize() {
@@ -137,7 +140,6 @@ class Catch {
     }
 
     calcCatcherBorder() {
-        this.catcher.leftBorder = this.catcher.posX - this.catcher.size / 4;
         this.catcher.rightBorder = this.catcher.posX + this.catcher.size;
     }
 
@@ -167,8 +169,10 @@ class Catch {
     }
 
     // Utilities
-    getCenterX(posX, width) {
-        return posX - width / 2;
+    getCenterX(posX, width, fromStart = false) {
+        return fromStart ?
+            posX + width / 2 :
+            posX - width / 2;
     }
 }
 

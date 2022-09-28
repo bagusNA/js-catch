@@ -123,7 +123,7 @@ class Catch {
     generateFruit() {
         setInterval(() => {
             this.fruits.push({
-                posX: this.canvas.width / 2,
+                posX: this.getCenterX(this.canvas.width / 2, this.fruit.size),
                 posY: 0 - this.fruit.size,
             });
         }, 500);
@@ -132,7 +132,7 @@ class Catch {
     setSize() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight - 4;
-        this.catcher.posX = this.canvas.width / 2 - this.catcher.size / 4;
+        this.catcher.posX = this.getCenterX(this.canvas.width / 2, this.catcher.size);
         this.calcCatcherBorder();
     }
 
@@ -164,6 +164,11 @@ class Catch {
             this.hp.current = this.hp.max;
 
         this.hpElement.style.transform = `scaleX(${this.hp.current / 100})`;
+    }
+
+    // Utilities
+    getCenterX(posX, width) {
+        return posX - width / 2;
     }
 }
 

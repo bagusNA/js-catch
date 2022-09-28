@@ -20,6 +20,7 @@ body {
 .float-container {
     position: absolute;
     height: 100vh;
+    width: 100vw;
     display: flex;
     flex-direction: column;
 }
@@ -45,10 +46,9 @@ body {
     width: calc(1 * var(--width));
     height: var(--height);
     background-color: var(--primary);
-    border-top-right-radius: calc(var(--height) / 2);
-    border-bottom-right-radius: calc(var(--height) / 2);
     margin-bottom: 1rem;
     transition: 50ms;
+    transform-origin: left;
 }
 
 #score {

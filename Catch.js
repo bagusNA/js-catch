@@ -5,7 +5,7 @@ class Catch {
         max: 100,
         current: 100,
         drain: 5,
-        idleDrain: 1,
+        idleDrain: .03,
     };
 
     fruits = [];
@@ -56,6 +56,8 @@ class Catch {
 
         this.drawFruits();
         this.drawCatcher();
+
+        this.updateHp(-this.hp.idleDrain);
     }
 
     drawFruits() {
@@ -115,8 +117,6 @@ class Catch {
             }
 
             this.calcCatcherBorder();
-            console.log(this.catcher.posX)
-
         });
     }
 
@@ -142,23 +142,28 @@ class Catch {
     }
 
     increaseScore() {
-        this.hp.current += 5;
+        this.updateHp(5);
 
-        if (this.hp.current >= this.hp.max - this.hp.drain)
-            this.hp.current = this.hp.max;
-
-        this.hpElement.style.width = `calc(${this.hp.current / 100} * var(--width)`;
         this.score += 300;
         this.scoreElement.innerHTML = this.score.toString().padStart(8, '0');
-
     }
 
     increaseMiss() {
-        this.hp.current -= 10;
-        if (this.hp.current <= 0)
-            this.hp.current = 0;
+        this.updateHp(-10);
+    }
 
-        this.hpElement.style.width = `calc(${this.hp.current / 100} * var(--width)`
+    updateHp(value, isReassign = false) {
+        if (isReassign)
+            this.hp.current = value;
+        else
+            this.hp.current += value;
+
+        if (this.hp.current < 0)
+            this.hp.current = 0;
+        else if (this.hp.current > this.hp.max)
+            this.hp.current = this.hp.max;
+
+        this.hpElement.style.transform = `scaleX(${this.hp.current / 100})`;
     }
 }
 

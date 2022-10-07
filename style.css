@@ -51,7 +51,21 @@ body {
     transform-origin: left;
 }
 
+#hp.alert {
+    background-color: lightpink;
+}
+
+#hp.danger {
+    background-color: red;
+}
+
 #score {
     font-size: 1.75rem;
     padding-top: .5rem;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

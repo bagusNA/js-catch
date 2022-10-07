@@ -7,6 +7,8 @@ const progressEl = document.getElementById('progress');
 
 const jsCatch = new Catch({
     canvas,
+    width: 800,
+    height: 'full',
     asset: {
         fruit: "./img/fruit.png",
         catcher: "./img/catcher.png"

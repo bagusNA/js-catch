@@ -27,9 +27,11 @@ class Catch {
 
     requestFrameId;
 
-    constructor({ canvas, asset, scoreElement, hpElement, progressElement }) {
+    constructor({ canvas, width, height = 'full', asset, scoreElement, hpElement, progressElement }) {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
+        this.width = width;
+        this.height = height;
         this.scoreElement = scoreElement;
         this.hpElement = hpElement;
         this.progressElement = progressElement;
@@ -133,8 +135,14 @@ class Catch {
     }
 
     setSize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight - 4;
+        this.canvas.height = this.height === 'full'
+                                ? window.innerHeight - 4
+                                : this.height;
+
+        this.canvas.width = this.width === 'full'
+                                ? window.innerWidth
+                                : this.width;
+
         this.catcher.posX = this.getCenterX(this.canvas.width / 2, this.catcher.size);
         this.calcCatcherBorder();
     }
@@ -155,6 +163,17 @@ class Catch {
     }
 
     updateHp(value, isReassign = false) {
+        const hpZone = [
+            {
+                hp: 25,
+                className: 'danger'
+            },
+            {
+                hp: 50,
+                className: 'alert'
+            },
+        ]
+
         if (isReassign)
             this.hp.current = value;
         else
@@ -164,6 +183,13 @@ class Catch {
             this.hp.current = 0;
         else if (this.hp.current > this.hp.max)
             this.hp.current = this.hp.max;
+
+        hpZone.forEach(zone => {
+            if (this.hp.current <= zone.hp && !this.hpElement.classList.contains(zone.className))
+                this.hpElement.classList.add(zone.className);
+            else if (this.hp.current > zone.hp && this.hpElement.classList.contains(zone.className))
+                this.hpElement.classList.remove(zone.className);
+        });
 
         this.hpElement.style.transform = `scaleX(${this.hp.current / 100})`;
     }

@@ -1,4 +1,11 @@
 class Catch {
+    game = {
+        started: false,
+        running: false,
+        paused: false,
+        ended: false,
+    }
+
     score = 0;
 
     hp = {
@@ -39,8 +46,26 @@ class Catch {
 
         this.fruit.asset.src = asset.fruit;
         this.catcher.asset.src = asset.catcher;
+    }
+
+    play({name, length, difficulty = 'easy'}) {
+        switch (difficulty) {
+            case "easy": this.setEasyDiff();
+                break;
+            case "normal": this.setNormalDiff();
+                break;
+            case "hard": this.setHardDiff();
+                break;
+        }
+
+        this.game = {
+            ...this.game,
+            started: true,
+            running: true,
+        }
 
         this.setup();
+        this.main();
     }
 
     setup() {
@@ -193,6 +218,28 @@ class Catch {
         });
 
         this.hpElement.style.transform = `scaleX(${this.hp.current / 100})`;
+    }
+
+    // Set difficulty
+    setEasyDiff() {
+        this.hp.drain = 5;
+        this.hp.idleDrain = .02;
+        this.fruit.interval = 1000;
+        this.catcher.dx = 10;
+    }
+
+    setNormalDiff() {
+        this.hp.drain = 7.5;
+        this.hp.idleDrain = .025;
+        this.fruit.interval = 750;
+        this.catcher.dx = 14;
+    }
+
+    setHardDiff() {
+        this.hp.drain = 10;
+        this.hp.idleDrain = .035;
+        this.fruit.interval = 450;
+        this.catcher.dx = 18;
     }
 
     // Utilities

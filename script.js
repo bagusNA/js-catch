@@ -18,4 +18,8 @@ const jsCatch = new Catch({
     progressElement: progressEl,
 });
 
-jsCatch.main();
+jsCatch.play({
+    name: 'Budi',
+    length: 120,
+    difficulty: 'hard'
+});

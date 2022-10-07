@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="style.css">
   <script defer src="script.js" type="module"></script>
 </head>
-<body>
+<body class="overflow-hidden">
   <div class="float-container">
     <div class="top">
       <div id="hp"></div>
@@ -22,6 +22,27 @@
     </div>
     <div class="bottom">
       <div id="progress"></div>
+    </div>
+
+    <div class="dialog">
+      <div id="play-dialog">
+        <h1>JS Catch</h1>
+        <form id="play-form">
+          <div class="difficulty">
+            <input type="radio" name="difficulty" id="easy" value="easy">
+            <label for="easy">Easy</label>
+            <input type="radio" name="difficulty" id="normal" value="normal">
+            <label for="normal">Normal</label>
+            <input type="radio" name="difficulty" id="hard" value="hard">
+            <label for="hard">Hard</label>
+          </div>
+          <div class="player">
+            <label for="player-name">Player Name</label>
+            <input type="text" id="player-name" name="player-name">
+          </div>
+          <button id="start-button">Start</button>
+        </form>
+      </div>
     </div>
   </div>
 

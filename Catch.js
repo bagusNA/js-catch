@@ -5,7 +5,7 @@ class Catch {
         max: 100,
         current: 100,
         drain: 5,
-        idleDrain: .03,
+        idleDrain: .025,
     };
 
     fruits = [];
@@ -13,6 +13,7 @@ class Catch {
         asset: new Image(),
         size: 64,
         speed: 10,
+        interval: 1000,
     }
 
     catcher = {
@@ -20,7 +21,7 @@ class Catch {
         posX: null,
         size: 128,
         offsetY: 100,
-        dx: 8,
+        dx: 12,
         leftBorder: null,
         rightBorder: null,
     }
@@ -124,14 +125,14 @@ class Catch {
 
     generateFruit() {
         setInterval(() => {
-            const posX = this.getCenterX(this.canvas.width / 2, this.fruit.size)
+            const posX = this.randomInt(this.fruit.size, this.canvas.width - this.fruit.size * 2);
 
             this.fruits.push({
                 posX,
                 posY: 0 - this.fruit.size,
                 centerX: this.getCenterX(posX, this.fruit.size, true),
             });
-        }, 250);
+        }, this.fruit.interval);
     }
 
     setSize() {
@@ -159,7 +160,7 @@ class Catch {
     }
 
     increaseMiss() {
-        this.updateHp(-10);
+        this.updateHp(-this.hp.drain);
     }
 
     updateHp(value, isReassign = false) {
@@ -199,6 +200,10 @@ class Catch {
         return fromStart ?
             posX + width / 2 :
             posX - width / 2;
+    }
+
+    randomInt(min, max) {
+        return Math.floor(Math.random() * max - min) + min;
     }
 }
 

@@ -37,7 +37,7 @@ body {
     display: none;
 }
 
-.float-container .dialog {
+.float-container #dialog {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -48,7 +48,7 @@ body {
     border-radius: 10px;
 }
 
-.float-container .dialog {
+.float-container #dialog {
     padding: 2rem;
 }
 
@@ -115,6 +115,8 @@ body {
     text-transform: uppercase;
     letter-spacing: 3px;
     border-radius: 10px;
+    border: 2px solid transparent;
+    transition: 100ms;
 }
 
 #play-dialog button:hover {

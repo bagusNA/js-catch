@@ -1,11 +1,18 @@
 class Catch {
-    game = {
+    status = {
         started: false,
         running: false,
         paused: false,
         ended: false,
     }
 
+    time = {
+        start: null,
+        current: null,
+    };
+
+    playerName;
+    length = 60;
     score = 0;
 
     hp = {
@@ -35,7 +42,7 @@ class Catch {
 
     requestFrameId;
 
-    constructor({ canvas, width, height = 'full', asset, scoreElement, hpElement, progressElement }) {
+    constructor({ canvas, width, height = 'full', asset, scoreElement, hpElement, progressElement, timeElement }) {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
         this.width = width;
@@ -43,6 +50,7 @@ class Catch {
         this.scoreElement = scoreElement;
         this.hpElement = hpElement;
         this.progressElement = progressElement;
+        this.timeElement = timeElement;
 
         this.fruit.asset.src = asset.fruit;
         this.catcher.asset.src = asset.catcher;
@@ -58,12 +66,14 @@ class Catch {
                 break;
         }
 
-        this.game = {
-            ...this.game,
+        this.playerName = name;
+        this.length = length;
+        this.status = {
+            ...this.status,
             started: true,
             running: true,
-        }
-
+        };
+        
         this.setup();
         this.main();
     }
@@ -75,17 +85,23 @@ class Catch {
     }
 
     main() {
-        this.render();
+        this.render(0);
     }
 
-    render() {
-        this.requestFrameId = requestAnimationFrame(() => this.render());
+    render(timestamp) {
+        this.requestFrameId = requestAnimationFrame((frameTimestamp) => this.render(frameTimestamp));
+        
+        this.time.current = timestamp;
+        if (!this.time.start)
+            this.time.start = timestamp;
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.drawFruits();
         this.drawCatcher();
 
         this.updateHp(-this.hp.idleDrain);
+        this.updateTime();
     }
 
     drawFruits() {
@@ -198,7 +214,7 @@ class Catch {
                 hp: 50,
                 className: 'alert'
             },
-        ]
+        ];
 
         if (isReassign)
             this.hp.current = value;
@@ -218,6 +234,23 @@ class Catch {
         });
 
         this.hpElement.style.transform = `scaleX(${this.hp.current / 100})`;
+    }
+
+    updateTime() {
+        const currentTimestamp = Math.floor(this.time.current - this.time.start);
+        const time = new Date(currentTimestamp);
+
+        const min = time.getMinutes();
+        const sec = time.getSeconds();
+        const ms = time.getMilliseconds();
+
+        const formattedTime = {
+            min: min.toString().padStart(2, '0'),
+            sec: sec.toString().padStart(2, '0'),
+            ms: ms.toString().padStart(3, '0'),
+        };
+
+        this.timeElement.innerHTML = `${formattedTime.min}:${formattedTime.sec}:${formattedTime.ms}`;
     }
 
     // Set difficulty

@@ -128,7 +128,7 @@ class Catch {
 
         this.time.current = timestamp;
         if (!this.time.start)
-            this.time.start = timestamp;
+            this.time.start = Date.now();
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -276,8 +276,9 @@ class Catch {
     }
 
     updateTime() {
-        const currentTimestamp = Math.floor(this.time.current - this.time.start);
-        const time = new Date(currentTimestamp);
+        const currentTimestamp = Math.floor(Date.now() - this.time.start);
+        const offsetTime = new Date(currentTimestamp);
+        const time = new Date(currentTimestamp + offsetTime.getTimezoneOffset() * 60000);
 
         const min = time.getMinutes();
         const sec = time.getSeconds();

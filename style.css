@@ -134,9 +134,28 @@ body {
 }
 
 #dialog > div {
-    min-width: 20vw;
+    min-width: 25vw;
 }
 /* ------------ */
+
+/* Game Over Dialog */
+#gameover-dialog {
+    display: none;
+}
+
+#gameover-dialog > div {
+    gap: 1rem 0;
+}
+
+#gameover-dialog table thead tr td {
+    padding-bottom: .5rem;
+    font-weight: bold;
+}
+
+#gameover-dialog table tbody tr td {
+    padding-bottom: .35rem;
+}
+/* ---------------- */
 
 #progress {
     width: calc(0.7 * 100vw);
@@ -166,7 +185,7 @@ body {
 
 #score {
     font-size: 1.75rem;
-    padding-top: .5rem;
+    padding: .5rem 0;
 }
 
 main {

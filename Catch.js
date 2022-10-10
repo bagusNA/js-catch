@@ -42,7 +42,7 @@ class Catch {
 
     requestFrameId;
 
-    constructor({ canvas, width, height = 'full', asset, scoreElement, hpElement, progressElement, timeElement }) {
+    constructor({ canvas, width, height = 'full', asset, scoreElement, hpElement, progressElement, timeElement, onGameOver }) {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
         this.width = width;
@@ -51,6 +51,7 @@ class Catch {
         this.hpElement = hpElement;
         this.progressElement = progressElement;
         this.timeElement = timeElement;
+        this.onGameOver = onGameOver;
 
         this.fruit.asset.src = asset.fruit;
         this.catcher.asset.src = asset.catcher;
@@ -73,7 +74,7 @@ class Catch {
             started: true,
             running: true,
         };
-        
+
         this.setup();
         this.main();
     }
@@ -94,6 +95,20 @@ class Catch {
         }
     }
 
+    gameOver() {
+        this.status = {
+            ...this.status,
+            running: false,
+            ended: true,
+        };
+
+        cancelAnimationFrame(this.requestFrameId);
+        this.saveToLeaderboard();
+
+        // Game over hook
+        this.onGameOver();
+    }
+
     setup() {
         this.events();
         this.setSize();
@@ -108,6 +123,8 @@ class Catch {
         this.requestFrameId = requestAnimationFrame((frameTimestamp) => this.render(frameTimestamp));
 
         if (!this.status.running) return;
+        if (this.hp.current === 0)
+            this.gameOver();
 
         this.time.current = timestamp;
         if (!this.time.start)
@@ -295,6 +312,33 @@ class Catch {
         this.hp.idleDrain = .035;
         this.fruit.interval = 450;
         this.catcher.dx = 18;
+    }
+
+    saveToLeaderboard() {
+        let leaderboard = this.getLeaderboard() ?? [];
+
+        if (!leaderboard) {
+            localStorage.setItem('scores', JSON.stringify([]));
+        }
+
+        leaderboard.push({
+            playerName: this.playerName,
+            score: this.score,
+        });
+
+        // Sort descending
+        leaderboard.sort((score1, score2) => score2.score - score1.score);
+
+        localStorage.setItem('scores', JSON.stringify(leaderboard));
+    }
+
+    getLeaderboard(length = 0) {
+        let leaderboard = JSON.parse(localStorage.getItem('scores'))
+
+        if (length)
+            leaderboard = leaderboard.slice(0, length);
+
+        return leaderboard;
     }
 
     // Utilities

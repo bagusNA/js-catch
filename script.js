@@ -6,15 +6,18 @@ const timeEl = document.getElementById('time');
 const hpEl = document.getElementById('hp');
 const progressEl = document.getElementById('progress');
 const playFormEl = document.getElementById('play-form');
+const leaderboardEl = document.getElementById('leaderboard');
 
 const dialog = {
     container: document.getElementById('dialog'),
     play: document.getElementById('play-dialog'),
     pause: document.getElementById('pause-dialog'),
+    gameOver: document.getElementById('gameover-dialog'),
 }
 
 const button = {
     resume: document.getElementById('btn-resume'),
+    restart: document.querySelectorAll('.btn-restart'),
 }
 
 const jsCatch = new Catch({
@@ -29,7 +32,32 @@ const jsCatch = new Catch({
     hpElement: hpEl,
     progressElement: progressEl,
     timeElement: timeEl,
+    onGameOver,
 });
+
+function onGameOver() {
+    dialog.container.style.display = 'block';
+    dialog.gameOver.style.display = 'block';
+
+    const leaderboard = jsCatch.getLeaderboard(15);
+
+    leaderboard.forEach((score, index) => {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+
+        const posTdEl = td.cloneNode(true);
+        posTdEl.innerHTML = (index + 1).toString();
+
+        const nameTdEl = td.cloneNode(true);
+        nameTdEl.innerHTML = score.playerName;
+
+        const scoreTdEl = td.cloneNode(true);
+        scoreTdEl.innerHTML = score.score;
+
+        tr.append(posTdEl, nameTdEl, scoreTdEl);
+        leaderboardEl.appendChild(tr);
+    });
+}
 
 const togglePause = () => {
     if (!jsCatch.status.started) return;
@@ -43,6 +71,7 @@ const togglePause = () => {
         jsCatch.resume();
 };
 
+// Event listeners
 playFormEl.addEventListener('submit', (ev) => {
     ev.preventDefault();
 
@@ -68,8 +97,14 @@ button.resume.addEventListener('click', () => {
     togglePause();
 });
 
+button.restart.forEach(btn => {
+    btn.addEventListener('click', () => {
+        window.location.reload();
+    });
+})
+
 document.addEventListener('keydown', (ev) => {
     if (ev.repeat || ev.key !== 'Escape') return;
 
     togglePause();
-})
+});

@@ -78,6 +78,22 @@ class Catch {
         this.main();
     }
 
+    pause() {
+        this.status = {
+            ...this.status,
+            running: false,
+            paused: true,
+        };
+    }
+
+    resume() {
+        this.status = {
+            ...this.status,
+            running: true,
+            paused: false,
+        }
+    }
+
     setup() {
         this.events();
         this.setSize();
@@ -90,7 +106,9 @@ class Catch {
 
     render(timestamp) {
         this.requestFrameId = requestAnimationFrame((frameTimestamp) => this.render(frameTimestamp));
-        
+
+        if (!this.status.running) return;
+
         this.time.current = timestamp;
         if (!this.time.start)
             this.time.start = timestamp;
@@ -148,6 +166,8 @@ class Catch {
         });
 
         document.addEventListener('keydown', (ev) => {
+            if (!this.status.running) return;
+
             const localDx = ev.shiftKey ? this.catcher.dx * 2 : this.catcher.dx;
 
             if (
@@ -166,6 +186,8 @@ class Catch {
 
     generateFruit() {
         setInterval(() => {
+            if (!this.status.running) return;
+
             const posX = this.randomInt(this.fruit.size, this.canvas.width - this.fruit.size * 2);
 
             this.fruits.push({

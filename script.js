@@ -5,8 +5,17 @@ const scoreEl = document.getElementById('score');
 const timeEl = document.getElementById('time');
 const hpEl = document.getElementById('hp');
 const progressEl = document.getElementById('progress');
-const dialogEl = document.getElementById('dialog');
 const playFormEl = document.getElementById('play-form');
+
+const dialog = {
+    container: document.getElementById('dialog'),
+    play: document.getElementById('play-dialog'),
+    pause: document.getElementById('pause-dialog'),
+}
+
+const button = {
+    resume: document.getElementById('btn-resume'),
+}
 
 const jsCatch = new Catch({
     canvas,
@@ -22,6 +31,17 @@ const jsCatch = new Catch({
     timeElement: timeEl,
 });
 
+const togglePause = () => {
+    if (!jsCatch.status.started) return;
+
+    dialog.container.style.display = !jsCatch.status.paused ? 'block' : 'none';
+    dialog.pause.style.display = !jsCatch.status.paused ? 'block' : 'none';
+
+    if (!jsCatch.status.paused)
+        jsCatch.pause();
+    else
+        jsCatch.resume();
+};
 
 playFormEl.addEventListener('submit', (ev) => {
     ev.preventDefault();
@@ -33,8 +53,8 @@ playFormEl.addEventListener('submit', (ev) => {
 
     topEl.style.display = 'block';
     bottomEl.style.display = 'block';
-    dialogEl.style.display = 'none';
-    playFormEl.style.display = 'none';
+    dialog.container.style.display = 'none';
+    dialog.play.style.display = 'none';
     document.body.classList.remove('overflow-hidden');
 
     jsCatch.play({
@@ -43,3 +63,13 @@ playFormEl.addEventListener('submit', (ev) => {
         difficulty: formData.get('difficulty'),
     });
 });
+
+button.resume.addEventListener('click', () => {
+    togglePause();
+});
+
+document.addEventListener('keydown', (ev) => {
+    if (ev.repeat || ev.key !== 'Escape') return;
+
+    togglePause();
+})
